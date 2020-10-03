@@ -1,0 +1,54 @@
+﻿@model CampOrno.Models.Compound
+
+@{
+    ViewData["Title"] = "Compound Details";
+}
+
+    <h1>Compound Details</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Campers)
+        </dt>
+        <dd class="col-sm-10">
+            @{
+                int camperCount = Model.Campers.Count;
+                if (camperCount > 0)
+                {
+                    string firstCamper = Model.Campers.FirstOrDefault().FullName;
+                    if (camperCount > 1)
+                    {
+                        string camperList = "";
+                        var c = Model.Campers.ToList();
+                        for (int i = 1; i < camperCount; i++)
+                        {
+                            camperList += c[i].FullName + " <br />";
+                        }
+                        <a class="" role="button" data-toggle="collapse" href="#collapseCamper@(Model.ID)" aria-expanded="false" aria-controls="collapseCamper@(Model.ID)">
+                            @firstCamper... <span class="badge badge-info">@camperCount</span>
+                        </a>
+                        <div class="collapse" id="collapseCamper@(Model.ID)">
+                            @Html.Raw(camperList)
+                        </div>
+                    }
+                    else
+                    {
+                        @firstCamper
+                    }
+                }
+            }
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
+    <a asp-action="Index">Back to Compound List</a>
+</div>

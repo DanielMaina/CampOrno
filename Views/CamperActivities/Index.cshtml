@@ -1,0 +1,199 @@
+﻿@model IEnumerable<CampOrno.Models.CamperActivity>
+
+@{
+    ViewData["Title"] = "Camper Activities";
+    CampOrno.Models.Camper camper = (CampOrno.Models.Camper)ViewBag.Camper;
+}
+
+<div class="media">
+    <div>
+        @{
+            if (camper.imageContent != null && camper.imageMimeType.Contains("image"))
+            {
+                string imageBase64 = Convert.ToBase64String(camper.imageContent);
+                string imageSrc = string.Format("data:" + camper.imageMimeType + ";base64,{0}", imageBase64);
+                <img src="@imageSrc" alt="Profile Picture of @camper.FullName" title="Profile Picture of @camper.FullName"
+                     style="max-width: 150px; max-height: 150px" class="img-fluid rounded" />
+            }
+            else
+            {
+                <img src="~/pictures/blankProfile.jpg" style="max-width: 150px; max-height: 150px" class="img-responsive img-rounded" />
+            }
+        }
+    </div>
+    <div class="media-body ml-3">
+        <h2><text class="hidden-xs">Camper: </text>@camper.FullName</h2>
+        <div class="row">
+            <div class="col-md-5">
+                <dl class="row">
+                    <dt class="col-md-4">
+                        @Html.DisplayNameFor(model => camper.FirstName)
+                    </dt>
+                    <dd class="col-md-8">
+                        @Html.DisplayFor(model => camper.FirstName)
+                    </dd>
+                    <dt class="col-md-4">
+                        @Html.DisplayNameFor(model => camper.MiddleName)
+                    </dt>
+                    <dd class="col-md-8">
+                        @Html.DisplayFor(model => camper.MiddleName)
+                    </dd>
+                    <dt class="col-md-4">
+                        @Html.DisplayNameFor(model => camper.LastName)
+                    </dt>
+                    <dd class="col-md-8">
+                        @Html.DisplayFor(model => camper.LastName)
+                    </dd>
+                    <dt class="col-md-4">
+                        Age (@Html.DisplayNameFor(model => camper.DOB))
+                    </dt>
+                    <dd class="col-md-8">
+                        @camper.Age (@Html.DisplayFor(model => camper.DOB))
+                    </dd>
+                    <dt class="col-md-4">
+                        @Html.DisplayNameFor(model => camper.Gender)
+                    </dt>
+                    <dd class="col-md-8">
+                        @Html.DisplayFor(model => camper.Gender)
+                    </dd>
+                </dl>
+            </div>
+            <div class="col-md-7">
+                <dl class="row">
+                    <dt class="col-md-4">
+                        @Html.DisplayNameFor(model => camper.Phone)
+                    </dt>
+                    <dd class="col-md-8">
+                        @Html.DisplayFor(model => camper.Phone)
+                    </dd>
+                    <dt class="col-md-4">
+                        @Html.DisplayNameFor(model => camper.eMail)
+                    </dt>
+                    <dd class="col-md-8">
+                        @Html.DisplayFor(model => camper.eMail)
+                    </dd>
+                    <dt class="col-md-4">
+                        @Html.DisplayNameFor(model => camper.Counselor)
+                    </dt>
+                    <dd class="col-md-8">
+                        @Html.DisplayFor(model => camper.Counselor.FullName)
+                    </dd>
+                    <dt class="col-md-4">
+                        @Html.DisplayNameFor(model => camper.Compound)
+                    </dt>
+                    <dd class="col-md-8">
+                        @Html.DisplayFor(model => camper.Compound.Name)
+                    </dd>
+                    <dt class="col-sm-4">
+                        @Html.DisplayNameFor(model => camper.CamperDiets)
+                    </dt>
+                    <dd class="col-sm-8">
+                        @{
+                            int dietCount = camper.CamperDiets.Count;
+                            if (dietCount > 0)
+                            {
+                                string firstdiet = camper.CamperDiets.FirstOrDefault().DietaryRestriction.Name;
+                                if (dietCount > 1)
+                                {
+                                    string dietList = firstdiet;
+                                    var c = camper.CamperDiets.ToList();
+                                    for (int i = 1; i < dietCount; i++)
+                                    {
+                                        dietList += ", " + c[i].DietaryRestriction.Name;
+                                    }
+                                    <a tabindex="0" class="" role="button" data-toggle="popover"
+                                       data-trigger="focus" title="Dietary Restrictions" data-placement="bottom" data-content="@dietList">@firstdiet...<span class="badge badge-info">@dietCount</span></a>
+                                }
+                                else
+                                {
+                                    @firstdiet
+                                }
+                            }
+                        }
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+<form asp-action="Index">
+    <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+    <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+    <input type="hidden" name="CamperID" value="@camper.ID" />
+    <dl class="row">
+        <dt class="col-md-2"><h4>Extra Activities</h4>
+        </dt>
+        <dd class="col-md-10">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="submit" name="actionButton" value="Activity" class="btn btn-link" />
+                        </th>
+                        <th>
+                            <input type="submit" name="actionButton" value="Fee" class="btn btn-link" />
+                            @{decimal totalFees = 0m; }
+                        </th>
+                        <th>
+                            <input type="submit" name="actionButton" value="Number of Sessions" class="btn btn-link" />
+                            @{int totalSessions = 0; }
+                        </th>
+                        <th>
+                            <a asp-controller="CamperActivities" asp-action="Add" asp-route-CamperID="@camper.ID" asp-route-CamperName="@camper.FullName">
+                                <span class="btn btn-success"><strong>&#x271A; Add</strong></span>
+                            </a>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Activity.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Fee)
+                                @{ totalFees += item.Fee;}
+                            </td>
+                            <td>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                @Html.DisplayFor(modelItem => item.NumberOfSessions)
+                                @{ totalSessions += item.NumberOfSessions;}
+                            </td>
+                            <td>
+                                <a asp-controller="CamperActivities" asp-action="Update" asp-route-id="@item.ID">
+                                    <span class="btn btn-sm btn-outline-primary">&#x270D;</span>
+                                </a>
+                                <a asp-controller="CamperActivities" asp-action="Remove" asp-route-id="@item.ID">
+                                    <span class="btn btn-sm btn-outline-danger">&#x274C</span>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                <tr>
+                    <td></td>
+                    <td>
+                        Total Fees: <strong>@totalFees.ToString("c")</strong>
+                    </td>
+                    <td>
+                        Total Number of Sessions: <strong>@totalSessions.ToString()</strong>
+                    </td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </dd>
+    </dl>
+</form>
+<div>
+    <a asp-action="Edit" asp-controller="Campers" asp-route-id="@camper.ID">Edit</a> |
+    <a asp-action="Index" asp-controller="Campers">Back to Camper List</a>
+</div>
+    @section Scripts {
+        <script type="text/javascript">
+            $(function () {
+                $('[data-toggle="popover"]').popover();
+            });
+        </script>
+    }

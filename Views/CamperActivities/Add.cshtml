@@ -1,0 +1,45 @@
+﻿@model CampOrno.Models.CamperActivity
+
+@{
+    ViewData["Title"] = "Add Activity";
+}
+
+<h2>Add Activity for Camper: @ViewData["CamperName"]</h2>
+<hr />
+<form asp-action="Add">
+    <input type="hidden" name="CamperID" value="@Model.CamperID" />
+    <input type="hidden" name="CamperName" value="@ViewData["CamperName"]" />
+    <div class="row">
+        <div class="col-md-4">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ActivityID" class="control-label"></label>
+                <select asp-for="ActivityID" class="form-control" asp-items="ViewBag.ActivityID">
+                    <option value="">Select the Activity</option>
+                </select>
+                <span asp-validation-for="ActivityID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Fee" class="control-label"></label>
+                <input asp-for="Fee" class="form-control" />
+                <span asp-validation-for="Fee" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumberOfSessions" class="control-label"></label>
+                <input asp-for="NumberOfSessions" class="form-control" />
+                <span asp-validation-for="NumberOfSessions" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index" asp-controller="CamperActivities" asp-route-CamperID="@Model.CamperID">Back to Camper</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,58 @@
+﻿@model CampOrno.Models.Counselor
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit Counselor</h1>
+
+<hr />
+<div asp-validation-summary="ModelOnly" class="col-md-8 text-danger"></div>
+<form asp-action="Edit">
+    <div class="row">
+        <div class="col-md-4">
+            <input type="hidden" asp-for="ID" />
+            <input type="hidden" asp-for="RowVersion" />
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MiddleName" class="control-label"></label>
+                <input asp-for="MiddleName" class="form-control" />
+                <span asp-validation-for="MiddleName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Nickname" class="control-label"></label>
+                <input asp-for="Nickname" class="form-control" />
+                <span asp-validation-for="Nickname" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SIN" class="control-label"></label>
+                <input asp-for="SIN" class="form-control" />
+                <span asp-validation-for="SIN" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-4">
+            <input type="submit" value="Save" class="btn btn-primary" />
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to Counselor List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

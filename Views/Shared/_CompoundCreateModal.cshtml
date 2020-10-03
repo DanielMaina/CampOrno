@@ -1,0 +1,16 @@
+﻿<!-- Modal-->
+<div class="modal fade" id="addCompoundModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Add New Compound</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                @{ var c = new CampOrno.Models.Compound();
+                    <partial name="_CompoundCreate" model="c" />
+                }
+            </div>
+        </div>
+    </div>
+</div>

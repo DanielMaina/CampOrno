@@ -1,0 +1,84 @@
+﻿@model IEnumerable<CampOrno.Models.Counselor>
+
+@{
+    ViewData["Title"] = "Counselors";
+}
+
+<h1>Counselor Index</h1>
+
+@if (User.IsInRole("Admin") || User.IsInRole("Supervisor"))
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
+<form asp-action="Index">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FormalName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CounselorCompounds)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FormalName)
+                    </td>
+                    <td>
+                        @{
+                            int itemCount = item.CounselorCompounds.Count;
+                            if (itemCount > 0)
+                            {
+                                string firstitem = item.CounselorCompounds.FirstOrDefault().Compound.Name;
+                                if (itemCount > 1)
+                                {
+                                    string itemList = "";
+                                    var c = item.CounselorCompounds.ToList();
+                                    for (int i = 1; i < itemCount; i++)
+                                    {
+                                        itemList += c[i].Compound.Name + " <br />";
+                                    }
+                                    <a class="" role="button" data-toggle="collapse" href="#collapseSum@(item.ID)" aria-expanded="false" aria-controls="collapseSum@(item.ID)">
+                                        @firstitem... <span class="badge badge-info">@itemCount</span>
+                                    </a>
+                                    <div class="collapse" id="collapseSum@(item.ID)">
+                                        @Html.Raw(itemList)
+                                    </div>
+                                }
+                                else
+                                {
+                                    @firstitem
+                                }
+                            }
+                        }
+                        @*For help with Bootstrap Collapse see: https://getbootstrap.com/docs/4.0/components/collapse/*@
+                    </td>
+                    <td>
+                        @{
+                            if (User.IsInRole("Admin"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> @:|
+                                <a asp-action="Details" asp-route-id="@item.ID">Details</a> @:|
+                                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                            }
+                            else if (User.IsInRole("Staff") || User.IsInRole("Supervisor"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> @:|
+                                <a asp-action="Details" asp-route-id="@item.ID">Details</a>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <partial name="_PagingNavBar" />
+</form>

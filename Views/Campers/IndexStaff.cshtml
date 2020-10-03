@@ -1,0 +1,158 @@
+﻿@model IEnumerable<CampOrno.Models.Camper>
+
+@{
+    ViewData["Title"] = "Campers";
+}
+
+<h1>Camper Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<form asp-action="Index">
+    <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+    <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+    <div class="form-horizontal">
+        <button class="btn btn-secondary" type="button" data-toggle="collapse" id="filterToggle" data-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+            Filter/Search
+        </button>
+        <div class="collapse @(ViewData["Filtering"])" id="collapseFilter">
+            <div class="card card-body bg-light">
+                <div class="form-row">
+
+                    <div class="form-group col-md-12">
+                        <label class="control-label">Select by Age Range <text class="text-danger">@ViewData["AgeRangeError"]</text></label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Age at Least </span>
+                            </div>
+                            @Html.TextBox("AgeFrom", null, new { @class = "form-control" })
+                            <div class="input-group-append">
+                                <span class="input-group-text"> and Younger Then </span>
+                            </div>
+                            @Html.TextBox("AgeTo", null, new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">Select by Compound:</label>
+                            @Html.DropDownList("CompoundID", null, "All Conpounds", htmlAttributes: new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">Search Camper Name:</label>
+                            @Html.TextBox("SearchString", null, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">Filter by Dietary Restriction:</label>
+                            @Html.DropDownList("DietaryRestrictionID", null, "All Dietary Restrictions", htmlAttributes: new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="col-md-6  align-self-end">
+                        <div class="form-group">
+                            <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary" />
+                            <a asp-action="Index" class="btn btn-outline-dark ">Clear</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>
+                    <input type="submit" name="actionButton" value="Camper" class="btn btn-link" />
+                </th>
+                <th>
+                    <input type="submit" name="actionButton" value="Age" class="btn btn-link" />/
+                    <input type="submit" name="actionButton" value="Gender" class="btn btn-link" />
+                </th>
+                <th>
+                    <input type="submit" name="actionButton" value="Compound" class="btn btn-link" />
+                </th>
+                <th>
+                    <input type="submit" disabled="disabled" value="Dietary Restrictions" class="btn btn-link" />
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @{
+                            if (item.imageContent != null && item.imageMimeType.Contains("image"))
+                            {
+                                string imageBase64 = Convert.ToBase64String(item.imageContent);
+                                string imageSrc = string.Format("data:" + item.imageMimeType + ";base64,{0}", imageBase64);
+                                <img src="@imageSrc" alt="Profile Picture of @item.FullName" title="Profile Picture of @item.FullName" style="max-height: 100px; max-width: 120px" class="img-fluid rounded" />
+                            }
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FullName)
+                    </td>
+                    <td align="center">
+                        @Html.DisplayFor(modelItem => item.Age) / @Html.DisplayFor(modelItem => item.Gender)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Compound.Name)
+                    </td>
+                    <td>
+                        @{
+                            int dietCount = item.CamperDiets.Count;
+                            if (dietCount > 0)
+                            {
+                                string firstdiet = item.CamperDiets.FirstOrDefault().DietaryRestriction.Name;
+                                if (dietCount > 1)
+                                {
+                                    string dietList = firstdiet;
+                                    var c = item.CamperDiets.ToList();
+                                    for (int i = 1; i < dietCount; i++)
+                                    {
+                                        dietList += ", " + c[i].DietaryRestriction.Name;
+                                    }
+                                    <a tabindex="0" class="" role="button" data-toggle="popover"
+                                       data-trigger="focus" title="Dietary Restrictions" data-placement="bottom" data-content="@dietList">@firstdiet...<span class="badge badge-info">@dietCount</span></a>
+                                }
+                                else
+                                {
+                                    @firstdiet
+                                }
+                            }
+                        }
+                        @*For help with Bootstrap Collapse see: https://getbootstrap.com/docs/4.0/components/collapse/*@
+                    </td>
+                    <td>
+                        @{
+                            if (User.Identity.Name == item.CreatedBy)
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> @:|
+                            }
+                            <a asp-action="Index" asp-controller="CamperActivities" asp-route-CamperID="@item.ID">Details</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <partial name="_PagingNavBar" />
+</form>
+@section Scripts {
+    <script type="text/javascript">
+        $(function () {
+            $('[data-toggle="popover"]').popover();
+        });
+    </script>
+}

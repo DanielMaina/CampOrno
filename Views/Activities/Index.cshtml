@@ -1,0 +1,49 @@
+﻿@model IEnumerable<CampOrno.Models.Activity>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Activities Index</h1>
+
+@if (User.IsInRole("Admin") || User.IsInRole("Supervisor") || User.IsInRole("Staff"))
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @{
+                        if (User.IsInRole("Admin") || User.IsInRole("Supervisor"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> @:|
+                            <a asp-action="Details" asp-route-id="@item.ID">Details</a> @:|
+                            <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                        }
+                        else if (User.IsInRole("Staff"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> @:|
+                            <a asp-action="Details" asp-route-id="@item.ID">Details</a>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
